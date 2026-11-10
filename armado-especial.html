@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Crear perfil de armado</title>
+  <link href="https://unpkg.com/primeng@17.18.0/resources/themes/lara-light-blue/theme.css" rel="stylesheet">
+  <link href="https://unpkg.com/primeicons@7.0.0/primeicons.css" rel="stylesheet" crossorigin="anonymous">
+  <style>
+    :root {
+      --primary-color: #3b82f6;
+      --primary-color-text: #ffffff;
+      --primary-50: #f5f9ff;
+      --primary-100: #d0e1fd;
+      --text-color: #4b5563;
+      --text-color-secondary: #6b7280;
+      --text-heading: #374151;
+      --surface-50: #f9fafb;
+      --surface-100: #f3f4f6;
+      --surface-200: #e5e7eb;
+      --surface-300: #d1d5db;
+      --surface-700: #374151;
+      --breadcrumb-link: #3b82f6;
+      --breadcrumb-link-hover: #2563eb;
+      --breadcrumb-muted: #6b7280;
+      --btn-cancel: #8b9299;
+      --btn-success: #669b37;
+      --table-border: var(--surface-200);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      min-height: 100vh;
+      font-family: var(--font-family, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif);
+      background: #fff;
+      color: var(--text-color);
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    .pi { font-style: normal; display: inline-block; min-width: 1em; line-height: 1; }
+
+    .page-shell { min-height: 100vh; display: flex; flex-direction: column; }
+    .page-content { flex: 1; max-width: 1200px; width: 100%; margin: 0 auto; padding: 1.5rem 2rem 2.5rem; }
+
+    .breadcrumb { font-size: 0.875rem; color: var(--breadcrumb-muted); margin-bottom: 0.75rem; }
+    .breadcrumb ol { display: flex; flex-wrap: wrap; align-items: center; gap: 0.35rem; list-style: none; }
+    .breadcrumb li + li::before { content: "/"; margin-right: 0.35rem; color: var(--breadcrumb-muted); }
+    .breadcrumb a { color: var(--breadcrumb-link); text-decoration: none; }
+    .breadcrumb a:hover { color: var(--breadcrumb-link-hover); text-decoration: underline; }
+    .breadcrumb li[aria-current="page"] { color: var(--breadcrumb-muted); word-break: break-word; }
+
+    .page-title { font-size: 1.8rem; font-weight: 600; color: var(--text-heading); margin-bottom: 1.25rem; overflow-wrap: anywhere; }
+
+    .form-section { margin-bottom: 2rem; }
+    .section-head { padding-bottom: 0.6rem; margin-bottom: 1rem; border-bottom: 1px solid var(--surface-200); }
+    .section-title { font-size: 1.05rem; font-weight: 600; color: #334155; margin: 0; }
+
+    .form-grid { display: grid; gap: 1.25rem 1.5rem; }
+    .form-grid--3 { grid-template-columns: repeat(3, 1fr); }
+    .form-grid--4 { grid-template-columns: repeat(4, 1fr); }
+    .field { display: flex; flex-direction: column; gap: 0.35rem; min-width: 0; }
+    .field-label { font-size: 0.875rem; font-weight: 500; color: var(--text-color); }
+    .field-label .unit { font-weight: inherit; color: inherit; }
+    .field-hint { font-size: 0.75rem; color: var(--text-color-secondary); line-height: 1.35; }
+    .field-error { font-size: 0.75rem; color: #dc2626; }
+    .info-tip { position: relative; display: inline-flex; align-items: center; margin-left: 0.35rem; color: var(--text-color-secondary); cursor: pointer; }
+    .info-tip .pi { font-size: 1.05rem; }
+    .info-tip:hover, .info-tip:focus-within { color: #1e3a8a; }
+    .info-tip__bubble {
+      position: absolute; bottom: calc(100% + 8px); left: 50%; transform: translateX(-50%);
+      background: #1e293b; color: #f8fafc; padding: 0.45rem 0.65rem; border-radius: 6px;
+      font-size: 0.75rem; font-weight: 400; line-height: 1.35; width: max-content; max-width: 280px;
+      opacity: 0; visibility: hidden; pointer-events: none; transition: opacity 0.15s ease; z-index: 60;
+      box-shadow: 0 6px 18px rgba(15, 23, 42, 0.25);
+    }
+    .info-tip__bubble::after { content: ""; position: absolute; top: 100%; left: 50%; transform: translateX(-50%); border: 5px solid transparent; border-top-color: #1e293b; }
+    .info-tip:hover .info-tip__bubble, .info-tip:focus-within .info-tip__bubble { opacity: 1; visibility: visible; }
+    .info-tip--right .info-tip__bubble { left: auto; right: -0.4rem; transform: none; }
+    .info-tip--right .info-tip__bubble::after { left: auto; right: 0.55rem; transform: none; }
+
+    .form-input, .form-select {
+      width: 100%;
+      min-height: 2.25rem;
+      min-width: 44px;
+      padding: 0.35rem 0.75rem;
+      font-size: 0.9rem;
+      border: 1px solid #ced4da;
+      border-radius: 6px;
+      background: #fff;
+      color: var(--text-color);
+      font-family: inherit;
+    }
+    .form-select {
+      appearance: none;
+      background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236b7280' stroke-width='2'><path d='M6 9l6 6 6-6'/></svg>");
+      background-repeat: no-repeat;
+      background-position: right 0.65rem center;
+      padding-right: 2rem;
+      cursor: pointer;
+    }
+    .form-input:focus, .form-select:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 2px var(--primary-100); }
+    .form-input:disabled, .form-input[disabled] { background: #f1f5f9; color: #94a3b8; border-color: #e2e8f0; cursor: not-allowed; opacity: 1; -webkit-text-fill-color: #94a3b8; }
+    .form-input.invalid, .form-select.invalid { border-color: #dc2626; box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.12); }
+
+    .form-actions { display: flex; gap: 0.75rem; margin-top: 2rem; flex-wrap: wrap; }
+    .btn {
+      padding: 0.5rem 1.1rem; min-height: 2.5rem; min-width: 44px;
+      border: 1px solid var(--surface-300); background: #fff; border-radius: 6px;
+      font-size: 0.9rem; font-weight: 500; font-family: inherit; cursor: pointer;
+      display: inline-flex; align-items: center; justify-content: center; gap: 0.45rem;
+      text-decoration: none; color: inherit;
+    }
+    .btn-secondary { background: var(--btn-cancel); color: #fff; border-color: var(--btn-cancel); }
+    .btn-success { background: var(--btn-success); color: #fff; border-color: var(--btn-success); }
+    .btn:disabled { opacity: 0.55; cursor: not-allowed; pointer-events: none; }
+
+    .checkbox-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.85rem 1.5rem; }
+    .checkbox-item {
+      display: flex; align-items: center; gap: 0.5rem; font-size: 0.875rem;
+      color: var(--text-color); cursor: pointer; min-height: 44px; padding: 0.15rem 0;
+    }
+    .checkbox-item input { width: 1.125rem; height: 1.125rem; accent-color: var(--primary-color); cursor: pointer; flex-shrink: 0; }
+    .checkbox-grid.invalid { outline: 2px solid rgba(220, 38, 38, 0.25); outline-offset: 4px; border-radius: 6px; }
+
+    .radio-group { display: flex; flex-wrap: wrap; gap: 0.5rem 1.5rem; align-items: center; min-height: 2.25rem; }
+    .radio-item {
+      display: inline-flex; align-items: center; gap: 0.45rem; font-size: 0.875rem;
+      color: var(--text-color); cursor: pointer; min-height: 44px;
+      padding: 0; border: none; background: transparent;
+    }
+    .radio-item input { width: 1.125rem; height: 1.125rem; accent-color: var(--primary-color); cursor: pointer; flex-shrink: 0; }
+
+    .switch-field { display: flex; flex-direction: column; gap: 0.35rem; }
+    .switch-row { display: flex; align-items: center; gap: 0.65rem; min-height: 44px; }
+    .onoff-toggle {
+      display: inline-grid;
+      grid-template-columns: 1fr 1fr;
+      width: 4.25rem;
+      height: 1.85rem;
+      padding: 0;
+      border: 1px solid #ced4da;
+      border-radius: 4px;
+      background: #fff;
+      cursor: pointer;
+      flex-shrink: 0;
+      overflow: hidden;
+      font-family: inherit;
+      line-height: 1;
+      vertical-align: middle;
+    }
+    .onoff-toggle:focus-visible { outline: none; box-shadow: 0 0 0 2px var(--primary-100); }
+    .onoff-toggle__on,
+    .onoff-toggle__off {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.6875rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      user-select: none;
+      pointer-events: none;
+    }
+    .onoff-toggle .onoff-toggle__on { color: transparent; background: #fff; }
+    .onoff-toggle .onoff-toggle__off { color: #212529; background: #e9ecef; }
+    .onoff-toggle.is-on .onoff-toggle__on,
+    .onoff-toggle[aria-checked="true"] .onoff-toggle__on {
+      color: #fff;
+      background: var(--primary-color);
+    }
+    .onoff-toggle.is-on .onoff-toggle__off,
+    .onoff-toggle[aria-checked="true"] .onoff-toggle__off {
+      color: transparent;
+      background: #fff;
+    }
+
+    .field-hidden { display: none !important; }
+
+    .toast {
+      position: fixed; bottom: 1.5rem; right: 1.5rem; z-index: 1300;
+      background: #1e293b; color: #f8fafc; padding: 0.85rem 1.1rem; border-radius: 8px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.2); max-width: min(420px, calc(100vw - 2rem)); font-size: 0.85rem;
+    }
+    .toast.hidden { display: none; }
+
+    .page-footer { margin-top: auto; padding: 0.65rem 1rem; text-align: center; font-size: 0.8rem; color: #9ca3af; background: #f3f4f6; border-top: 1px solid #e5e7eb; }
+
+    @media (max-width: 1100px) {
+      .form-grid--4 { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 900px) {
+      .page-content { padding: 1.25rem 1rem 2rem; }
+      .form-grid--3, .form-grid--4 { grid-template-columns: 1fr; }
+      .checkbox-grid { grid-template-columns: repeat(2, 1fr); }
+      .page-title { font-size: 1.45rem; }
+    }
+
+    @media (max-width: 560px) {
+      .checkbox-grid { grid-template-columns: 1fr; }
+      .radio-group { flex-direction: column; align-items: flex-start; gap: 0.25rem; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .info-tip__bubble { transition: none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-shell">
+    <main class="page-content" id="mainContent">
+      <nav class="breadcrumb" aria-label="Ruta de navegación">
+        <ol>
+          <li><a href="#" id="navInicio">Inicio</a></li>
+          <li><a href="#" id="navArmado">Armado especial</a></li>
+          <li aria-current="page">Crear perfil de armado</li>
+        </ol>
+      </nav>
+      <h1 class="page-title" id="pageTitle">Crear perfil de armado</h1>
+
+      <section class="form-section" aria-labelledby="secBasica">
+        <div class="section-head"><h2 class="section-title" id="secBasica">Información básica</h2></div>
+        <div class="form-grid form-grid--4">
+          <div class="field">
+            <label class="field-label" for="fNombre">Nombre</label>
+            <input id="fNombre" type="text" class="form-input" maxlength="80" autocomplete="off">
+            <span class="field-error" id="fNombre-error" hidden></span>
+          </div>
+          <div class="field">
+            <label class="field-label" for="fDescripcion">Descripción</label>
+            <input id="fDescripcion" type="text" class="form-input" maxlength="150" autocomplete="off">
+          </div>
+          <div class="field">
+            <label class="field-label" for="fTipoArmado">Tipo de armado</label>
+            <select id="fTipoArmado" class="form-select" aria-required="true">
+              <option value="">Selecciona un tipo</option>
+              <option value="dona">Armado de dona</option>
+              <option value="familia">Armado por familia</option>
+              <option value="tradicional-bultos">Armado tradicional y bultos</option>
+              <option value="torre-dona">Torre en dona</option>
+              <option value="torre-sku">Torre por SKU</option>
+              <option value="tradicional-sku">Tradicional por SKU</option>
+            </select>
+            <span class="field-error" id="fTipoArmado-error" hidden></span>
+          </div>
+          <div class="field">
+            <label class="field-label" for="fTipoReporte">Report type</label>
+            <select id="fTipoReporte" class="form-select">
+              <option value="panoramic">Panoramic report</option>
+              <option value="detailed">Detailed report</option>
+              <option value="summary">Summary report</option>
+            </select>
+          </div>
+          <div class="field field-hidden" data-req-bultos id="wrapMatrizBasica">
+            <label class="field-label" for="fMatrizBasica">Matriz de densidad</label>
+            <select id="fMatrizBasica" class="form-select"></select>
+            <span class="field-error" id="fMatrizBasica-error" hidden></span>
+          </div>
+          <div class="field">
+            <label class="checkbox-item" for="fValidarTienda">
+              <input id="fValidarTienda" type="checkbox">
+              <span>Validar existencia de tienda</span>
+            </label>
+          </div>
+          <div class="field switch-field">
+            <span class="field-label" id="fInterfazManualLabel">Ejecución de interfaz de salida de forma manual</span>
+            <div class="switch-row">
+              <button type="button" class="onoff-toggle" id="fInterfazManual" role="switch" aria-checked="false" aria-labelledby="fInterfazManualLabel">
+                <span class="onoff-toggle__on" aria-hidden="true">ON</span>
+                <span class="onoff-toggle__off" aria-hidden="true">OFF</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="form-section" aria-labelledby="secRestricciones">
+        <div class="section-head"><h2 class="section-title" id="secRestricciones">Restricciones de armado</h2></div>
+        <div class="form-grid form-grid--3">
+
+          <!-- Tradicional por SKU -->
+          <div class="field field-hidden" data-req-trad-sku id="wrapAlturaMaxTradSku">
+            <label class="field-label" for="fAlturaMaxTradSku">Altura máxima del armado <span class="unit">(cm)</span></label>
+            <input id="fAlturaMaxTradSku" type="number" step="0.01" min="0.01" class="form-input" aria-required="true">
+            <span class="field-error" id="fAlturaMaxTradSku-error" hidden></span>
+          </div>
+
+          <div class="field field-hidden" data-req-trad-sku id="wrapTipoTarimaTradSku">
+            <label class="field-label" for="fTipoTarimaTradSku">Tipo de tarima</label>
+            <select id="fTipoTarimaTradSku" class="form-select" aria-required="true"></select>
+            <span class="field-error" id="fTipoTarimaTradSku-error" hidden></span>
+          </div>
+
+          <div class="field field-hidden" data-req-trad-sku id="wrapMatrizTradSku">
+            <label class="field-label" for="fMatrizTradSku">Matriz de densidad</label>
+            <select id="fMatrizTradSku" class="form-select" aria-required="true"></select>
+            <span class="field-error" id="fMatrizTradSku-error" hidden></span>
+          </div>
+
+          <div class="field field-hidden" data-req-trad-sku id="wrapMaxOcTarima">
+            <label class="field-label" for="fMaxOcTarima">Máximo de órdenes de compra por tarima</label>
+            <input id="fMaxOcTarima" type="number" step="1" min="1" class="form-input">
+            <span class="field-error" id="fMaxOcTarima-error" hidden></span>
+          </div>
+
+          <div class="field field-hidden switch-field" data-req-trad-sku id="wrapItemNuevoPacking">
+            <span class="field-label" id="fItemNuevoPackingLabel">Indicar ítem nuevo en packing list</span>
+            <div class="switch-row">
+              <button type="button" class="onoff-toggle" id="fItemNuevoPacking" role="switch" aria-checked="false" aria-labelledby="fItemNuevoPackingLabel">
+                <span class="onoff-toggle__on" aria-hidden="true">ON</span>
+                <span class="onoff-toggle__off" aria-hidden="true">OFF</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Campos compartidos / otros tipos -->
+          <div class="field" id="wrapTipoTarima" data-hide-trad-sku>
+            <label class="field-label" for="fTipoTarima">Tipo de tarima</label>
+            <select id="fTipoTarima" class="form-select"></select>
+            <span class="field-error" id="fTipoTarima-error" hidden></span>
+          </div>
+
+          <div class="field field-hidden" data-req-bultos id="wrapAlturaMin">
+            <label class="field-label" for="fAlturaMin">Altura mínima del armado <span class="unit">(cm)</span></label>
+            <input id="fAlturaMin" type="number" step="0.01" min="0" class="form-input">
+            <span class="field-error" id="fAlturaMin-error" hidden></span>
+          </div>
+
+          <div class="field" id="wrapAlturaMax" data-hide-trad-sku>
+            <label class="field-label" for="fAlturaMax">Altura máxima del armado <span class="unit">(cm)</span></label>
+            <input id="fAlturaMax" type="number" step="0.01" min="0" class="form-input">
+            <span class="field-error" id="fAlturaMax-error" hidden></span>
+          </div>
+
+          <div class="field field-hidden" data-hide-trad-sku id="wrapCaraPrincipal">
+            <label class="field-label" for="fCaraPrincipal">Lado de la cara principal</label>
+            <select id="fCaraPrincipal" class="form-select">
+              <option value="">Ninguno</option>
+              <option value="frontal">Frontal</option>
+              <option value="lateral">Lateral</option>
+            </select>
+          </div>
+
+          <div class="field field-hidden" data-hide-trad-sku id="wrapWallUsage">
+            <label class="field-label" for="fWallUsage">Wall usage factor <span class="unit">(%)</span></label>
+            <input id="fWallUsage" type="number" step="0.01" class="form-input">
+          </div>
+
+          <div class="field field-hidden" data-req-bultos>
+            <label class="field-label" for="fTarimaAlto">Alto <span class="unit">(cm)</span></label>
+            <input id="fTarimaAlto" type="text" class="form-input" disabled>
+          </div>
+          <div class="field field-hidden" data-req-bultos>
+            <label class="field-label" for="fTarimaAncho">Ancho <span class="unit">(cm)</span></label>
+            <input id="fTarimaAncho" type="text" class="form-input" disabled>
+          </div>
+          <div class="field field-hidden" data-req-bultos>
+            <label class="field-label" for="fTarimaLargo">Largo <span class="unit">(cm)</span></label>
+            <input id="fTarimaLargo" type="text" class="form-input" disabled>
+          </div>
+
+          <!-- Lógica de etiquetas: solo tradicional y bultos; NO se muestra en Tradicional por SKU -->
+          <div class="field field-hidden switch-field" data-req-bultos id="wrapLogicaEtiquetas">
+            <span class="field-label" id="fLogicaEtiquetasLabel">Lógica de etiquetas</span>
+            <div class="switch-row">
+              <button type="button" class="onoff-toggle" id="fLogicaEtiquetas" role="switch" aria-checked="false" aria-labelledby="fLogicaEtiquetasLabel">
+                <span class="onoff-toggle__on" aria-hidden="true">ON</span>
+                <span class="onoff-toggle__off" aria-hidden="true">OFF</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="field field-hidden" id="wrapTipoEtiqueta">
+            <label class="field-label" for="fTipoEtiqueta">Tipo de etiqueta</label>
+            <select id="fTipoEtiqueta" class="form-select" aria-required="true">
+              <option value="">Selecciona un tipo de etiqueta</option>
+              <option value="RFID-TAR">RFID tarima</option>
+              <option value="RFID-BUL">RFID bulto</option>
+              <option value="STD-BAR">Código de barras estándar</option>
+            </select>
+            <span class="field-error" id="fTipoEtiqueta-error" hidden></span>
+          </div>
+
+        </div>
+      </section>
+
+      <section class="form-section field-hidden" data-req-bultos id="bultosSection" aria-labelledby="secBultos">
+        <div class="section-head"><h2 class="section-title" id="secBultos">Restricciones de bultos</h2></div>
+        <div class="form-grid form-grid--3">
+          <div class="field">
+            <label class="field-label" for="fPesoMax">Peso máximo <span class="unit">(kg)</span></label>
+            <input id="fPesoMax" type="number" step="0.01" min="0" class="form-input">
+            <span class="field-error" id="fPesoMax-error" hidden></span>
+          </div>
+          <div class="field">
+            <label class="field-label" for="fVolumenMax">Volumen máximo <span class="unit">(m<sup>3</sup>)</span></label>
+            <input id="fVolumenMax" type="number" step="0.001" min="0" class="form-input">
+            <span class="field-error" id="fVolumenMax-error" hidden></span>
+          </div>
+          <div class="field">
+            <label class="field-label" for="fContenedores">Contenedores máximos por tarima</label>
+            <input id="fContenedores" type="number" step="1" min="1" class="form-input">
+            <span class="field-error" id="fContenedores-error" hidden></span>
+          </div>
+        </div>
+      </section>
+
+      <section class="form-section field-hidden" data-req-trad-sku id="transportSectionTradSku" aria-labelledby="secTransporteTradSku">
+        <div class="section-head"><h2 class="section-title" id="secTransporteTradSku">Configuraciones de transporte</h2></div>
+        <p class="field-hint" style="margin-bottom: 0.85rem;">Catálogo de OPS. Selecciona las unidades de transporte aplicables al perfil.</p>
+        <div class="checkbox-grid" id="transportGridTradSku" role="group" aria-labelledby="secTransporteTradSku"></div>
+        <span class="field-error" id="fTransportesTradSku-error" hidden></span>
+      </section>
+
+      <section class="form-section" data-hide-trad-sku id="transportSectionOtros" aria-labelledby="secTransporteOtros">
+        <div class="section-head"><h2 class="section-title" id="secTransporteOtros">Configuraciones de transporte</h2></div>
+        <div class="checkbox-grid" id="transportGrid"></div>
+      </section>
+
+      <div class="form-actions">
+        <button type="button" class="btn btn-secondary" id="cancelBtn">Cancelar</button>
+        <button type="button" class="btn btn-success" id="submitBtn">Crear</button>
+      </div>
+    </main>
+    <footer class="page-footer">3.35.134 ©Netlogistik 2026</footer>
+  </div>
+
+  <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
+
+  <script>
+    (function () {
+      var DENSITY_KEY = 'densityMatricesCatalog';
+      var PROFILES_KEY = 'armadoEspecialProfiles';
+      var DEFAULT_TARIMA_COPPEL = 'std-tacon';
+      var SITE_DEFAULTS = { alturaMin: 80, pesoMax: 24, volumenMax: 0.96 };
+
+      var TARIMAS = [
+        { id: '', nombre: 'Ninguno', activo: true },
+        { id: 'std-tacon', nombre: 'Tarima estándar de tacón', alto: 15, ancho: 100, largo: 120, activo: true },
+        { id: 'std-121015', nombre: 'Tarima estándar 1.20 m × 1.00 m × 0.15 m', alto: 15, ancho: 100, largo: 120, activo: true },
+        { id: 'std-1210', nombre: 'Tarima estándar 1200x1000', alto: 14.5, ancho: 100, largo: 120, activo: true },
+        { id: 'usa-1208', nombre: 'Tarima americana 1200x800', alto: 14.4, ancho: 80, largo: 120, activo: true },
+        { id: 'eur-800', nombre: 'Tarima europea 800x1200', alto: 14.4, ancho: 80, largo: 120, activo: true },
+        { id: 'media-608', nombre: 'Media tarima 600x800', alto: 13.8, ancho: 60, largo: 80, activo: true }
+      ];
+
+      var TRANSPORTS = [
+        { id: '15T', label: '15T', maxHeight: 200 },
+        { id: '35T', label: '35T', maxHeight: 240 },
+        { id: 'RBN', label: 'RBN', maxHeight: 210 },
+        { id: 'THN', label: 'THN', maxHeight: 190 },
+        { id: 'MDN', label: 'MDN', maxHeight: 220 },
+        { id: '40T', label: '40T', maxHeight: 245 },
+        { id: '48T', label: '48T', maxHeight: 250 },
+        { id: '53T', label: '53T', maxHeight: 260 },
+        { id: 'predeterminado', label: 'Predeterminado', maxHeight: 220 }
+      ];
+
+      var TIPO_LABELS = {
+        dona: 'Armado de dona',
+        familia: 'Armado por familia',
+        'tradicional-bultos': 'Armado tradicional y bultos',
+        'torre-dona': 'Torre en dona',
+        'torre-sku': 'Torre por SKU',
+        'tradicional-sku': 'Tradicional por SKU'
+      };
+
+      function $(id) { return document.getElementById(id); }
+
+      function getActiveMatrices() {
+        var list = [];
+        try {
+          var raw = localStorage.getItem(DENSITY_KEY);
+          if (raw) {
+            list = JSON.parse(raw).filter(function (m) {
+              return !m.deleted && (m.estatus === undefined || m.estatus === 'Activa');
+            }).map(function (m) { return { id: m.id, nombre: m.nombre }; });
+          }
+        } catch (e) { list = []; }
+        if (!list.length) {
+          list = [
+            { id: 'MAT-DON-01', nombre: 'Matriz estándar dona' },
+            { id: 'MAT-TRD-01', nombre: 'Matriz tradicional Coppel' },
+            { id: 'MAT-TRD-02', nombre: 'Matriz tradicional export' },
+            { id: 'MAT-BUL-01', nombre: 'Matriz bultos CD México' }
+          ];
+        }
+        return list;
+      }
+
+      function loadProfiles() {
+        try {
+          var raw = localStorage.getItem(PROFILES_KEY);
+          return raw ? JSON.parse(raw) : [];
+        } catch (e) { return []; }
+      }
+
+      function saveProfiles(list) {
+        localStorage.setItem(PROFILES_KEY, JSON.stringify(list));
+      }
+
+      function showToast(msg) {
+        var el = $('toast');
+        el.textContent = msg;
+        el.classList.remove('hidden');
+        clearTimeout(showToast._t);
+        showToast._t = setTimeout(function () { el.classList.add('hidden'); }, 3500);
+      }
+
+      function setError(id, msg) {
+        var input = $(id);
+        var err = $(id + '-error');
+        if (input) input.classList.toggle('invalid', !!msg);
+        if (err) { err.textContent = msg || ''; err.hidden = !msg; }
+      }
+
+      function clearErrors() {
+        [
+          'fNombre', 'fTipoArmado', 'fMatrizBasica', 'fTipoTarima',
+          'fAlturaMin', 'fAlturaMax', 'fAlturaMaxTradSku',
+          'fTipoTarimaTradSku', 'fMatrizTradSku', 'fMaxOcTarima',
+          'fPesoMax', 'fVolumenMax', 'fContenedores', 'fTipoEtiqueta', 'fTransportesTradSku'
+        ].forEach(function (id) { setError(id, ''); });
+        $('transportGridTradSku').classList.remove('invalid');
+      }
+
+      function isBultos() { return $('fTipoArmado').value === 'tradicional-bultos'; }
+      function isTradSku() { return $('fTipoArmado').value === 'tradicional-sku'; }
+
+      function setSwitch(id, value) {
+        var btn = $(id);
+        if (!btn) return;
+        var on = !!value;
+        btn.setAttribute('aria-checked', on ? 'true' : 'false');
+        btn.classList.toggle('is-on', on);
+      }
+
+      function getSwitch(id) {
+        var btn = $(id);
+        return !!(btn && btn.getAttribute('aria-checked') === 'true');
+      }
+
+      function bindSwitch(id, onChange) {
+        var btn = $(id);
+        function toggle() {
+          setSwitch(id, !getSwitch(id));
+          if (onChange) onChange();
+        }
+        btn.addEventListener('click', toggle);
+        btn.addEventListener('keydown', function (e) {
+          if (e.key === ' ' || e.key === 'Enter') {
+            e.preventDefault();
+            toggle();
+          }
+        });
+      }
+
+      function populateMatrices(selectId) {
+        var sel = $(selectId);
+        var current = sel.value;
+        sel.innerHTML = '<option value="">Selecciona una matriz de densidad</option>';
+        getActiveMatrices().forEach(function (m) {
+          var o = document.createElement('option');
+          o.value = m.id;
+          o.textContent = m.nombre;
+          sel.appendChild(o);
+        });
+        if (current) sel.value = current;
+      }
+
+      function populateTarimas(selectId, includeEmpty) {
+        var sel = $(selectId);
+        var current = sel.value;
+        sel.innerHTML = '';
+        TARIMAS.filter(function (t) {
+          if (!includeEmpty && !t.id) return false;
+          return t.activo !== false;
+        }).forEach(function (t) {
+          var o = document.createElement('option');
+          o.value = t.id;
+          o.textContent = t.nombre;
+          sel.appendChild(o);
+        });
+        if (current) sel.value = current;
+      }
+
+      function buildTransportGrid(containerId, attr) {
+        var grid = $(containerId);
+        grid.innerHTML = '';
+        TRANSPORTS.forEach(function (t) {
+          var label = document.createElement('label');
+          label.className = 'checkbox-item';
+          label.innerHTML = '<input type="checkbox" value="' + t.id + '" ' + attr + '> <span>' + t.label + '</span>';
+          grid.appendChild(label);
+        });
+      }
+
+      function applyTarimaDims() {
+        var t = TARIMAS.find(function (x) { return x.id === $('fTipoTarima').value; });
+        $('fTarimaAlto').value = t && t.alto != null ? t.alto : 'No aplica';
+        $('fTarimaAncho').value = t && t.ancho != null ? t.ancho : 'No aplica';
+        $('fTarimaLargo').value = t && t.largo != null ? t.largo : 'No aplica';
+      }
+
+      function refreshEtiquetaFields() {
+        var showTipo = isBultos() && getSwitch('fLogicaEtiquetas');
+        $('wrapTipoEtiqueta').classList.toggle('field-hidden', !showTipo);
+        if (!showTipo) {
+          $('fTipoEtiqueta').value = '';
+          setError('fTipoEtiqueta', '');
+        }
+      }
+
+      function refreshConditionalFields() {
+        var bultos = isBultos();
+        var tradSku = isTradSku();
+
+        document.querySelectorAll('[data-req-bultos]').forEach(function (el) {
+          el.classList.toggle('field-hidden', !bultos);
+        });
+        document.querySelectorAll('[data-req-trad-sku]').forEach(function (el) {
+          el.classList.toggle('field-hidden', !tradSku);
+        });
+        document.querySelectorAll('[data-hide-trad-sku]').forEach(function (el) {
+          el.classList.toggle('field-hidden', tradSku);
+        });
+
+        if (bultos) applyTarimaDims();
+        refreshEtiquetaFields();
+      }
+
+      function applySiteDefaults() {
+        if (!isBultos()) return;
+        if ($('fAlturaMin').value === '') $('fAlturaMin').value = SITE_DEFAULTS.alturaMin;
+        if ($('fPesoMax').value === '') $('fPesoMax').value = SITE_DEFAULTS.pesoMax;
+        if ($('fVolumenMax').value === '') $('fVolumenMax').value = SITE_DEFAULTS.volumenMax;
+      }
+
+      function applyTradSkuDefaults() {
+        $('fAlturaMaxTradSku').value = '';
+        $('fTipoTarimaTradSku').value = DEFAULT_TARIMA_COPPEL;
+        $('fMatrizTradSku').value = '';
+        $('fMaxOcTarima').value = '';
+        setSwitch('fItemNuevoPacking', false);
+        setTransportes('[data-transport-trad-sku]', []);
+      }
+
+      function getTransportes(selector) {
+        return Array.prototype.slice.call(document.querySelectorAll(selector + ':checked'))
+          .map(function (c) { return c.value; });
+      }
+
+      function setTransportes(selector, values) {
+        var list = values || [];
+        document.querySelectorAll(selector).forEach(function (cb) {
+          cb.checked = list.indexOf(cb.value) !== -1;
+        });
+      }
+
+      function findTarimaNombre(id) {
+        var t = TARIMAS.find(function (x) { return x.id === id; });
+        return t ? t.nombre : id || '—';
+      }
+
+      function findMatrizNombre(id) {
+        var m = getActiveMatrices().find(function (x) { return x.id === id; });
+        return m ? m.nombre : id || '—';
+      }
+
+      function collectPayload() {
+        var tipo = $('fTipoArmado').value;
+        var now = new Date().toISOString();
+        var base = {
+          nombre: $('fNombre').value.trim(),
+          descripcion: $('fDescripcion').value.trim(),
+          tipoArmado: tipo,
+          tipoArmadoLabel: TIPO_LABELS[tipo] || tipo,
+          tipoReporte: $('fTipoReporte').value,
+          validarExistenciaTienda: $('fValidarTienda').checked,
+          ejecucionInterfazSalidaManual: getSwitch('fInterfazManual'),
+          actualizadoPor: 'admin.wms',
+          actualizado: now,
+          creado: now
+        };
+
+        if (tipo === 'tradicional-sku') {
+          base.alturaMinCm = SITE_DEFAULTS.alturaMin;
+          base.alturaMaxCm = Number($('fAlturaMaxTradSku').value);
+          base.tipoTarimaId = $('fTipoTarimaTradSku').value;
+          base.tipoTarimaNombre = findTarimaNombre(base.tipoTarimaId);
+          base.matrizDensidadId = $('fMatrizTradSku').value;
+          base.matrizDensidadNombre = findMatrizNombre(base.matrizDensidadId);
+          base.maxOrdenesCompraPorTarima = $('fMaxOcTarima').value === '' ? null : Number($('fMaxOcTarima').value);
+          base.indicarItemNuevoPackingList = getSwitch('fItemNuevoPacking');
+          base.unidadesTransporte = getTransportes('[data-transport-trad-sku]');
+          base.logicaEtiquetas = null;
+        }
+
+        if (tipo === 'tradicional-bultos') {
+          base.logicaEtiquetas = getSwitch('fLogicaEtiquetas');
+          base.tipoEtiqueta = getSwitch('fLogicaEtiquetas') ? $('fTipoEtiqueta').value : null;
+        }
+
+        return base;
+      }
+
+      function resetForm() {
+        ['fNombre', 'fDescripcion', 'fAlturaMin', 'fAlturaMax', 'fWallUsage', 'fPesoMax', 'fVolumenMax', 'fContenedores',
+          'fAlturaMaxTradSku', 'fMaxOcTarima']
+          .forEach(function (id) { $(id).value = ''; });
+        $('fTipoArmado').value = 'tradicional-sku';
+        $('fTipoReporte').value = 'panoramic';
+        $('fValidarTienda').checked = false;
+        $('fMatrizBasica').value = '';
+        $('fMatrizTradSku').value = '';
+        $('fCaraPrincipal').value = '';
+        $('fTipoTarima').value = '';
+        $('fTipoEtiqueta').value = '';
+        setSwitch('fInterfazManual', false);
+        setSwitch('fLogicaEtiquetas', false);
+        setSwitch('fItemNuevoPacking', false);
+        setTransportes('[data-transport]', []);
+        setTransportes('[data-transport-trad-sku]', []);
+        clearErrors();
+        applyTradSkuDefaults();
+        refreshConditionalFields();
+      }
+
+      function validate() {
+        clearErrors();
+        var ok = true;
+        if (!$('fNombre').value.trim()) { setError('fNombre', 'El nombre es obligatorio.'); ok = false; }
+        if (!$('fTipoArmado').value) { setError('fTipoArmado', 'El tipo de armado es obligatorio.'); ok = false; }
+
+        if (isTradSku()) {
+          var minH = SITE_DEFAULTS.alturaMin;
+          var maxH = $('fAlturaMaxTradSku').value;
+
+          if (maxH === '') {
+            setError('fAlturaMaxTradSku', 'La altura máxima del armado es obligatoria.');
+            ok = false;
+          } else if (Number(maxH) <= 0) {
+            setError('fAlturaMaxTradSku', 'Debe ser un valor decimal positivo.');
+            ok = false;
+          } else if (Number(maxH) <= minH) {
+            setError('fAlturaMaxTradSku', 'Debe ser mayor a la altura mínima del armado (' + minH + ' cm).');
+            ok = false;
+          }
+
+          if (!$('fTipoTarimaTradSku').value) {
+            setError('fTipoTarimaTradSku', 'Selecciona el tipo de tarima.');
+            ok = false;
+          }
+
+          if (!$('fMatrizTradSku').value) {
+            setError('fMatrizTradSku', 'Selecciona una matriz de densidad.');
+            ok = false;
+          }
+
+          var maxOc = $('fMaxOcTarima').value;
+          if (maxOc !== '' && (!Number.isInteger(Number(maxOc)) || Number(maxOc) < 1)) {
+            setError('fMaxOcTarima', 'Debe ser un número entero positivo o dejarse vacío.');
+            ok = false;
+          }
+        }
+
+        if (isBultos()) {
+          if (!$('fMatrizBasica').value) { setError('fMatrizBasica', 'Selecciona una matriz de densidad.'); ok = false; }
+          if (!$('fTipoTarima').value) { setError('fTipoTarima', 'Selecciona el tipo de tarima.'); ok = false; }
+          var minVal = $('fAlturaMin').value;
+          if (minVal === '') { setError('fAlturaMin', 'La altura mínima es obligatoria.'); ok = false; }
+          else if (Number(minVal) < 0) { setError('fAlturaMin', 'Debe ser un valor decimal positivo (>= 0).'); ok = false; }
+          var peso = $('fPesoMax').value;
+          if (peso === '') { setError('fPesoMax', 'El peso máximo es obligatorio.'); ok = false; }
+          else if (Number(peso) <= 0) { setError('fPesoMax', 'Debe ser un valor decimal positivo.'); ok = false; }
+          var vol = $('fVolumenMax').value;
+          if (vol === '') { setError('fVolumenMax', 'El volumen máximo es obligatorio.'); ok = false; }
+          else if (Number(vol) <= 0) { setError('fVolumenMax', 'Debe ser un valor decimal positivo.'); ok = false; }
+          var cont = $('fContenedores').value;
+          if (cont === '') { setError('fContenedores', 'Los contenedores máximos son obligatorios.'); ok = false; }
+          else if (!Number.isInteger(Number(cont)) || Number(cont) <= 0) {
+            setError('fContenedores', 'Debe ser un número entero positivo.');
+            ok = false;
+          }
+          if (getSwitch('fLogicaEtiquetas') && !$('fTipoEtiqueta').value) {
+            setError('fTipoEtiqueta', 'Selecciona un tipo de etiqueta.');
+            ok = false;
+          }
+        }
+
+        return ok;
+      }
+
+      function openCreate() {
+        resetForm();
+        populateMatrices('fMatrizBasica');
+        populateMatrices('fMatrizTradSku');
+        populateTarimas('fTipoTarima', true);
+        populateTarimas('fTipoTarimaTradSku', false);
+        applyTradSkuDefaults();
+        applySiteDefaults();
+        refreshConditionalFields();
+      }
+
+      $('cancelBtn').addEventListener('click', openCreate);
+      $('submitBtn').addEventListener('click', function () {
+        if (!validate()) {
+          showToast('Revisa los campos obligatorios.');
+          return;
+        }
+        var profiles = loadProfiles();
+        var payload = collectPayload();
+        payload.id = 'PRF-' + Date.now();
+        profiles.push(payload);
+        saveProfiles(profiles);
+        showToast('Perfil «Tradicional por SKU» creado correctamente.');
+      });
+
+      ['navInicio', 'navArmado'].forEach(function (id) {
+        $(id).addEventListener('click', function (e) {
+          e.preventDefault();
+          openCreate();
+        });
+      });
+
+      $('fTipoArmado').addEventListener('change', function () {
+        refreshConditionalFields();
+        populateMatrices('fMatrizBasica');
+        populateMatrices('fMatrizTradSku');
+        if (isTradSku()) applyTradSkuDefaults();
+        if (isBultos()) {
+          setSwitch('fLogicaEtiquetas', false);
+          refreshEtiquetaFields();
+        }
+        applySiteDefaults();
+      });
+
+      $('fTipoTarima').addEventListener('change', applyTarimaDims);
+      $('transportGridTradSku').addEventListener('change', function () {
+        $('transportGridTradSku').classList.remove('invalid');
+        setError('fTransportesTradSku', '');
+      });
+
+      bindSwitch('fInterfazManual');
+      bindSwitch('fItemNuevoPacking');
+      bindSwitch('fLogicaEtiquetas', refreshEtiquetaFields);
+
+      populateTarimas('fTipoTarima', true);
+      populateTarimas('fTipoTarimaTradSku', false);
+      buildTransportGrid('transportGrid', 'data-transport');
+      buildTransportGrid('transportGridTradSku', 'data-transport-trad-sku');
+      populateMatrices('fMatrizBasica');
+      populateMatrices('fMatrizTradSku');
+
+      openCreate();
+    })();
+  </script>
+</body>
+</html>
